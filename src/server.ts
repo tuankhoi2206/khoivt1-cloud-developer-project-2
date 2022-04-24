@@ -32,8 +32,8 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   //! END @TODO1
   // Implemented /filteredimage
   // Response code 200 for filterImage successful
-  // Response code 400 for image_url null of empty
-  // Response code 422 for correct image_url input but can not filter
+  // Response code 400 for image_url is null or empty
+  // Response code 422 for the image_url is correct but it can not filter
   app.get("/filteredimage", async (req: Request, res: Response) => {
     let { image_url } = req.query;
     if( !image_url || image_url.trim() === '') {
@@ -44,7 +44,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
       res.sendFile(result);
       res.on('finish', () => deleteLocalFiles([result]));
     } catch(error) {
-      console.log('Got error during filter url');
+      console.log('Have error in process url');
       console.error(error);
       res.status(422).send('Could not filter image url!')
     }

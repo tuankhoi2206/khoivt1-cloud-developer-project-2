@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response} from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
@@ -30,7 +30,25 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   /**************************************************************************** */
 
   //! END @TODO1
-  
+  // Implemented /filteredimage
+  // Response code 200 for filterImage successful
+  // Response code 400 for image_url null of empty
+  // Response code 422 for correct image_url input but can not filter
+  app.get("/filteredimage", async (req: Request, res: Response) => {
+    let { image_url } = req.query;
+    if( !image_url || image_url.trim() === '') {
+      return res.status(400).send(`image_url is required`);
+    }
+    try{
+      let result = await filterImageFromURL(image_url);
+      res.sendFile(result);
+      res.on('finish', () => deleteLocalFiles([result]));
+    } catch(error) {
+      console.log('Got error during filter url');
+      console.error(error);
+      res.status(422).send('Could not filter image url!')
+    }
+});
   // Root Endpoint
   // Displays a simple message to the user
   app.get( "/", async ( req, res ) => {
